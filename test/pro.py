@@ -1,45 +1,45 @@
-# -*- coding: UTF-8 -*-
-import cv2
-import numpy as np
+import sys
+import cv2 as cv
 
-img = cv2.imread("img/1.jpg")
 
-# 将图像转换为HSV像素空间，因为HSV空间对颜色比较敏感
-hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
+def main(argv):
+    print("""
+    Zoom In-Out demo
+    ------------------
+    * [i] -> Zoom [i]n
+    * [o] -> Zoom [o]ut
+    * [ESC] -> Close program
+    """)
 
-# 分别设置HSV颜色空间中，红色、黄色、蓝色、绿色的阈值
-lower_red = np.array([0, 43, 46])
-upper_red = np.array([10, 255, 255])
+    filename = argv[0] if len(argv) > 0 else 'img/1.jpg'
+    # Load the image
+    src = cv.imread(cv.samples.findFile(filename))
+    # Check if image is loaded fine
+    if src is None:
+        print('Error opening image!')
+        print('Usage: pyramids.py [image_name -- default ../data/chicky_512.png] \n')
+        return -1
 
-lower_yellow = np.array([26, 43, 46])
-upper_yellow = np.array([34, 255, 255])
+    while 1:
+        rows, cols, _channels = map(int, src.shape)
 
-lower_blue = np.array([100, 43, 46])
-upper_blue = np.array([124, 255, 255])
+        cv.imshow('Pyramids Demo', src)
 
-lower_green = np.array([35, 43, 46])
-upper_green = np.array([77, 255, 255])
+        k = cv.waitKey(0)
+        if k == 27:
+            break
 
-# 使用inRange函数获取图像中目标颜色的索引
-mask_red = cv2.inRange(hsv, lower_red, upper_red)
-mask_blue = cv2.inRange(hsv, lower_blue, upper_blue)
-mask_green = cv2.inRange(hsv, lower_green, upper_green)
-mask_yellow = cv2.inRange(hsv, lower_yellow, upper_yellow)
+        elif chr(k) == 'i':
+            src = cv.pyrUp(src, dstsize=(2 * cols, 2 * rows))
+            print('** Zoom In: Image x 2')
 
-img_mask = np.copy(img)
+        elif chr(k) == 'o':
+            src = cv.pyrDown(src, dstsize=(cols // 2, rows // 2))
+            print('** Zoom Out: Image / 2')
 
-color_1 = [128, 9, 21]
-color_2 = [50, 14, 77]
-color_3 = [61, 154, 124]
-color_4 = [59, 170, 246]
+    cv.destroyAllWindows()
+    return 0
 
-# 给目标像素赋值
-img_mask[mask_red != 0] = color_1
-img_mask[mask_blue != 0] = color_2
-img_mask[mask_green != 0] = color_3
-img_mask[mask_yellow != 0] = color_4
 
-cv2.imshow("changed", img_mask)
-cv2.imshow("source", img)
-cv2.waitKey(0)
-cv2.destroyAllWindows()
+if __name__ == "__main__":
+    main(sys.argv[1:])
