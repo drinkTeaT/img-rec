@@ -1,42 +1,32 @@
-"""
-@file filter2D.py
-@brief Sample code that shows how to implement your own linear filters by using filter2D function
-"""
-import sys
 import cv2 as cv
 import numpy as np
+from PIL import ImageGrab
 
 
-def main(argv):
-    window_name = 'filter2D Demo'
-
-    imageName = argv[0] if len(argv) > 0 else 'img/1.jpg'
+def main():
     # Loads an image
-    src = cv.imread(cv.samples.findFile(imageName), cv.IMREAD_COLOR)
-    # Check if image is loaded fine
-    if src is None:
-        print('Error opening image!')
-        print('Usage: filter2D.py [image_name -- default lena.jpg] \n')
-        return -1
-
-    ddepth = -1
-
-    ind = 0
     while True:
+        # src = np.array(ImageGrab.grab(bbox=(0, 40, 800, 640)))
+        # gray = cv.cvtColor(src, cv.COLOR_BGR2GRAY)
+        # gray = cv.medianBlur(gray, 5)
+        # rows = gray.shape[0]
+        # circles = cv.HoughCircles(gray, cv.HOUGH_GRADIENT, 1, rows / 8,
+        #                           param1=100, param2=30,
+        #                           minRadius=1, maxRadius=30)
+        # if circles is not None:
+        #     circles = np.uint16(np.around(circles))
+        #     for i in circles[0, :]:
+        #         center = (i[0], i[1])
+        #         # circle center
+        #         cv.circle(src, center, 1, (0, 100, 100), 3)
+        #         # circle outline
+        #         radius = i[2]
+        #         print(radius)
+        #         cv.circle(src, center, radius, (255, 0, 255), 3)
+        # cv.imshow("detected circles", src)
+        screen = np.array(ImageGrab.grab(bbox=(0, 40, 800, 640)))
+        # print('Frame took {} seconds'.format(time.time()-last_time))
+        cv.imshow('window', screen)
 
-        kernel_size = 3 + 2 * (ind % 5)
-        kernel = np.ones((kernel_size, kernel_size), dtype=np.float32)
-        kernel /= (kernel_size * kernel_size)
 
-        dst = cv.filter2D(src, ddepth, kernel)
-
-        cv.imshow(window_name, dst)
-        c = cv.waitKey(500)
-        if c == 27:
-            break
-        ind += 1
-    return 0
-
-
-if __name__ == "__main__":
-    main(sys.argv[1:])
+main()
