@@ -31,7 +31,10 @@ def main():
         if circles is not None and write_circles is not None:
             circles_copy = np.uint16(np.around(write_circles))
             for i in circles_copy[0, :]:
+                center = (i[0], i[1])
                 write_center = (i[0], i[1])
+                radius = i[2]
+                cv.circle(src, center, radius, (255, 0, 255), 3)
                 print("白色点:" + str(write_center))
             circles = np.uint16(np.around(circles))
             for i in circles[0, :]:
