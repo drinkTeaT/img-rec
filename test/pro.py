@@ -1,32 +1,45 @@
-import cv2 as cv
+# -*- coding: UTF-8 -*-
+import cv2
 import numpy as np
-from PIL import ImageGrab
 
+img = cv2.imread("img/1.jpg")
 
-def main():
-    # Loads an image
-    while True:
-        # src = np.array(ImageGrab.grab(bbox=(0, 40, 800, 640)))
-        # gray = cv.cvtColor(src, cv.COLOR_BGR2GRAY)
-        # gray = cv.medianBlur(gray, 5)
-        # rows = gray.shape[0]
-        # circles = cv.HoughCircles(gray, cv.HOUGH_GRADIENT, 1, rows / 8,
-        #                           param1=100, param2=30,
-        #                           minRadius=1, maxRadius=30)
-        # if circles is not None:
-        #     circles = np.uint16(np.around(circles))
-        #     for i in circles[0, :]:
-        #         center = (i[0], i[1])
-        #         # circle center
-        #         cv.circle(src, center, 1, (0, 100, 100), 3)
-        #         # circle outline
-        #         radius = i[2]
-        #         print(radius)
-        #         cv.circle(src, center, radius, (255, 0, 255), 3)
-        # cv.imshow("detected circles", src)
-        screen = np.array(ImageGrab.grab(bbox=(0, 40, 800, 640)))
-        # print('Frame took {} seconds'.format(time.time()-last_time))
-        cv.imshow('window', screen)
+# 将图像转换为HSV像素空间，因为HSV空间对颜色比较敏感
+hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
 
+# 分别设置HSV颜色空间中，红色、黄色、蓝色、绿色的阈值
+lower_red = np.array([0, 43, 46])
+upper_red = np.array([10, 255, 255])
 
-main()
+lower_yellow = np.array([26, 43, 46])
+upper_yellow = np.array([34, 255, 255])
+
+lower_blue = np.array([100, 43, 46])
+upper_blue = np.array([124, 255, 255])
+
+lower_green = np.array([35, 43, 46])
+upper_green = np.array([77, 255, 255])
+
+# 使用inRange函数获取图像中目标颜色的索引
+mask_red = cv2.inRange(hsv, lower_red, upper_red)
+mask_blue = cv2.inRange(hsv, lower_blue, upper_blue)
+mask_green = cv2.inRange(hsv, lower_green, upper_green)
+mask_yellow = cv2.inRange(hsv, lower_yellow, upper_yellow)
+
+img_mask = np.copy(img)
+
+color_1 = [128, 9, 21]
+color_2 = [50, 14, 77]
+color_3 = [61, 154, 124]
+color_4 = [59, 170, 246]
+
+# 给目标像素赋值
+img_mask[mask_red != 0] = color_1
+img_mask[mask_blue != 0] = color_2
+img_mask[mask_green != 0] = color_3
+img_mask[mask_yellow != 0] = color_4
+
+cv2.imshow("changed", img_mask)
+cv2.imshow("source", img)
+cv2.waitKey(0)
+cv2.destroyAllWindows()
