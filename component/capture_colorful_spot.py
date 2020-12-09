@@ -23,7 +23,7 @@ def main():
         # 3对蓝色(黑色)敏感白色不敏感
         # 1只对黑色敏感
         gray = cv.medianBlur(gray, 3)
-        gray_copy = cv.medianBlur(gray, 5)
+        gray_copy = cv.medianBlur(gray_copy, 5)
         rows = gray.shape[0]
         # min(max)Radius 为最小(大)半径
         circles = detect_circles(gray, rows, 5, 7, 128)
