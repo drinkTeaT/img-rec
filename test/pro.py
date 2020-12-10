@@ -1,22 +1,8 @@
-from __future__ import print_function
-import cv2 as cv
+import cv2
 import numpy as np
-import argparse
-parser = argparse.ArgumentParser(description='Code for Feature Detection tutorial.')
-parser.add_argument('--input', help='Path to input image.', default='img/sk1.jpg')
-args = parser.parse_args()
-src = cv.imread(args.input, cv.IMREAD_GRAYSCALE)
-if src is None:
-    print('Could not open or find the image:', args.input)
-    exit(0)
-#-- Step 1: Detect the keypoints using SURF Detector
-minHessian = 400
-detector = cv.xfeatures2d_SURF.create(hessianThreshold=minHessian)
-keypoints = detector.detect(src)
-#-- Draw keypoints
-img_keypoints = np.empty((src.shape[0], src.shape[1], 3), dtype=np.uint8)
-cv.drawKeypoints(src, keypoints, img_keypoints)
-print(keypoints)
-#-- Show detected (drawn) keypoints
-cv.imshow('SURF Keypoints', img_keypoints)
-cv.waitKey()
+
+img = cv2.imread('img/sk1.jpg')
+cv2.imshow('origin', img)
+cv2.imshow('canny', cv2.Canny(img, 1000, 400))
+cv2.waitKey()
+cv2.destroyWindow()
